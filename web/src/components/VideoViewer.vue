@@ -61,7 +61,17 @@ export default {
 			const blob = new Blob([srt2vtt(srt)], { type: 'text/vtt' })
 			track.src = URL.createObjectURL(blob)
 			video.textTracks[0].mode = 'show'
-		}
+		} else {
+            const vttUrl = new URL(url)
+            vttUrl.pathname = pathSansExt + '.vtt'
+            const hasVtt = await checkExists(vttUrl)
+            if (hasVtt) {
+                const vtt = await api.get(vttUrl).text()
+                const blob = new Blob([vtt], { type: 'text/vtt' })
+                track.src = URL.createObjectURL(blob)
+                video.textTracks[0].mode = 'show'
+            }
+        }
 
 		video.play()
 	},
